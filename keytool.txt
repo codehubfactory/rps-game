@@ -1,0 +1,1 @@
+keytool -genkey -v -keystore c:\Users\X\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 100000 -alias publishkey
