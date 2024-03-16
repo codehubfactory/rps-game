@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'core/base/modules/alert/alert_manager.dart';
 import 'core/base/modules/navigation/navigation_route.dart';
 import 'core/base/modules/navigation/navigation_service.dart';
+import 'product/banner/banner_view.dart';
 import 'product/splash/view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  unawaited(MobileAds.instance.initialize());
   runApp(const MyApp());
 }
 
@@ -25,7 +29,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: NavigationRoute.instance.generateRoute,
       scaffoldMessengerKey: AlertManager.instance.alertKey,
       title: 'Rock Paper Scissors',
-      home: const SplashView(),
+      home:  MyBannerAdWidget(),
     );
   }
 }
