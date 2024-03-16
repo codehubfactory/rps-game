@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:r_p_s_game/core/bloc/block_manager.dart';
 import 'package:r_p_s_game/product/home/view.dart';
 
@@ -12,10 +13,43 @@ import '../../core/components/svg_widget.dart';
 
 abstract class HomeViewmodel extends BaseState<HomeView> with TickerProviderStateMixin {
   late AnimationController animationcontroller;
+  final String adUnitId = 'ca-app-pub-9585663775364638/8162395542'; 
+  BannerAd? bannerAdd;
+
   @override
   void initState() {
+    _loadAd();
     animationcontroller = AnimationController(duration: const Duration(seconds: 17), vsync: this, upperBound: 2)..repeat();
     super.initState();
+  }
+
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: widget.adSize,
+      // adUnitId: widget.adUnitId,
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            bannerAdd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
   }
 
   List<Widget> buildWidgets() {
@@ -56,6 +90,7 @@ abstract class HomeViewmodel extends BaseState<HomeView> with TickerProviderStat
 
   @override
   void dispose() {
+    bannerAdd?.dispose();
     animationcontroller.dispose();
     super.dispose();
   }
